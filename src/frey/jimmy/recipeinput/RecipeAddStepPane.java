@@ -19,30 +19,26 @@ import java.util.ArrayList;
 /**
  * Screen for adding recipes to the saved recipe list.
  */
-public class RecipeAddPane extends BorderPane {
-    Recipe recipe;
+public class RecipeAddStepPane extends BorderPane {
+    Recipe mRecipe;
     TextArea textAreaInstructions = new TextArea();
     Button btBackToListPane = new Button("Back to recipe list");
     Button btAddMoreIngredients = new Button("Add more ingredients");
-    Button btDone = new Button("Done");
-    Button btAddStep = new Button("Add a step to this recipe");
-    ComboBox<String> cbCategoryLightness = new ComboBox<>();
-    ComboBox<String> cbCategorySweetness = new ComboBox<>();
-    ComboBox<String> cbCategoryRegion = new ComboBox<>();
-    TextField tfRecipeName = new TextField("<Enter Recipe Name>");
-    TextField tfTimerMinutes = new TextField("<Enter cook time>");
-    TextField tfRecipeDescription = new TextField("<Brief description>");
-    TextField tfRecipeServesNumber = new TextField("<Enter number of people it serves");
+    Button btDone = new Button("Save this recipe");
+    Button btAddStep = new Button("Save this step and add another step");
     TextField tfRecipeImageId = new TextField(("<Enter recipe image ID>"));
     VBox topVBox = new VBox(C.SMALL_MARING_FIXED);
-    HBox recipeCategoriesHBox = new HBox(C.SMALL_MARING_FIXED);
     VBox rightVBox = new VBox(C.SMALL_MARING_FIXED);
     HBox bottomHBox = new HBox(C.SMALL_MARING_FIXED);
     ArrayList<IngredientEditSubPane> ingredientEditSubPaneArrayList = new ArrayList<>();
+    private ArrayList<RecipeStep> mRecipeStepArrayList;
 
 
-    public RecipeAddPane(Stage primaryStage) {
+    public RecipeAddStepPane(Stage primaryStage, Recipe r, ArrayList<RecipeStep>recipeStepArrayList) {
         this.setPadding(new Insets(C.SMALL_MARING_FIXED));
+
+        mRecipe = r;
+        mRecipeStepArrayList = recipeStepArrayList;
 
         //Configure center of BorderPane
         this.setCenter(textAreaInstructions);
@@ -68,25 +64,15 @@ public class RecipeAddPane extends BorderPane {
             addIngredientPane();
         });
 
-        btAddStep.setOnAction(e -> {
-            String recipeName = tfRecipeName.getText();
-            String recipeDescription = tfRecipeDescription.getText();
-            int servesNumber = Integer.valueOf(tfRecipeServesNumber.getText());
-            boolean isSweet = cbCategorySweetness.getValue().equals("Sweet");
-            boolean isLight = cbCategoryLightness.getValue().equals("Light");
-            int totalMinutes = Integer.valueOf(tfTimerMinutes.getText());
-            String region = cbCategoryRegion.getValue();
-            ArrayList<RecipeStep> recipeStepList = new ArrayList<RecipeStep>();
-            ArrayList<Ingredient> recipeIngredientList = getIngredientAsArrayList();
-            int recipeImageId = Integer.valueOf(tfRecipeImageId.getText());
-            int isGood = 2;
+        btAddStep.setOnAction(e->{
+            ArrayList<Ingredient> recipeStepIngredientList = getIngredientAsArrayList();
+            int recipeStepImageId = Integer.valueOf(tfRecipeImageId.getText());
             String instructions = textAreaInstructions.getText();
-
-
-            recipe = new Recipe(recipeName, recipeDescription, servesNumber,
-                    isSweet, isLight, totalMinutes, region, recipeStepList,
-                    recipeIngredientList, recipeImageId, isGood, instructions);
-            primaryStage.setScene(Main.createScene(new RecipeAddStepPane(primaryStage, recipe, recipeStepList)));
+            RecipeStep stepToAdd = new RecipeStep(recipeStepIngredientList,instructions,recipeStepImageId);
+            mRecipeStepArrayList.add(stepToAdd);
+            mRecipe.setRecipeStepList(mRecipeStepArrayList);
+            System.out.println(mRecipe.getRecipeStepList().size());
+            primaryStage.setScene(Main.createScene(new RecipeAddStepPane(primaryStage, mRecipe, mRecipeStepArrayList)));
         });
 
         btDone.setOnAction(e -> {
@@ -141,23 +127,8 @@ public class RecipeAddPane extends BorderPane {
     private void initializeTopVBox() {
         HBox recipeInfoHBox = new HBox(C.SMALL_MARING_FIXED);
         recipeInfoHBox.setPadding(new Insets(C.SMALL_MARING_FIXED));
-        recipeInfoHBox.getChildren().addAll(tfRecipeName, tfRecipeDescription, tfTimerMinutes, tfRecipeServesNumber, tfRecipeImageId);
+        recipeInfoHBox.getChildren().addAll(tfRecipeImageId);
         topVBox.getChildren().add(recipeInfoHBox);
-
-        recipeCategoriesHBox.setAlignment(Pos.BASELINE_LEFT);
-        cbCategorySweetness.setEditable(true);
-        cbCategorySweetness.getItems().addAll(RecipeBook.get().getSpinnerList(RecipeBook.CATEGORY_SWEET_SAVORY));
-
-        recipeCategoriesHBox.setAlignment(Pos.BASELINE_LEFT);
-        cbCategoryLightness.setEditable(true);
-        cbCategoryLightness.getItems().addAll(RecipeBook.get().getSpinnerList(RecipeBook.CATEGORY_LIGHT_HEAVY));
-
-        recipeCategoriesHBox.setAlignment(Pos.BASELINE_LEFT);
-        cbCategoryRegion.setEditable(true);
-        cbCategoryRegion.getItems().addAll(RecipeBook.get().getSpinnerList(RecipeBook.CATEGORY_REGION));
-
-        recipeCategoriesHBox.getChildren().addAll(new Label("Sweetness: "), cbCategorySweetness, new Label(" Lighntess: "), cbCategoryLightness, new Label(" Region: "), cbCategoryRegion);
-        topVBox.getChildren().add(recipeCategoriesHBox);
     }
 
     private void addRecipe() {
@@ -165,24 +136,15 @@ public class RecipeAddPane extends BorderPane {
             Main.notifyUser("Invalid.  Did not save");
             return;
         }
-        String recipeName = tfRecipeName.getText();
-        String recipeDescription = tfRecipeDescription.getText();
-        int servesNumber = Integer.valueOf(tfRecipeServesNumber.getText());
-        boolean isSweet = cbCategorySweetness.getValue().equals("Sweet");
-        boolean isLight = cbCategoryLightness.getValue().equals("Light");
-        int totalMinutes = Integer.valueOf(tfTimerMinutes.getText());
-        String region = cbCategoryRegion.getValue();
-        ArrayList<RecipeStep> recipeStepList = null;
-        ArrayList<Ingredient> recipeIngredientList = getIngredientAsArrayList();
-        int recipeImageId = Integer.valueOf(tfRecipeImageId.getText());
-        int isGood = 2;
+        ArrayList<Ingredient> recipeStepIngredientList = getIngredientAsArrayList();
+        int recipeStepImageId = Integer.valueOf(tfRecipeImageId.getText());
         String instructions = textAreaInstructions.getText();
-
-
-        recipe = new Recipe(recipeName, recipeDescription, servesNumber,
-                isSweet, isLight, totalMinutes, region, recipeStepList,
-                recipeIngredientList, recipeImageId, isGood, instructions);
-        RecipeBook.get().addRecipe(recipe);
+        RecipeStep stepToAdd = new RecipeStep(recipeStepIngredientList,instructions,recipeStepImageId);
+        mRecipeStepArrayList.add(stepToAdd);
+        mRecipe.setRecipeStepList(mRecipeStepArrayList);
+        System.out.println(mRecipe.getRecipeStepList().size());
+        RecipeBook.get().addRecipe(mRecipe);
+        System.out.println("The first item in the recipe book has a recipe list of size: " + RecipeBook.get().getRecipes().get(0).getRecipeStepList().size());
         Main.notifyUser("Saved!");
 
     }
