@@ -32,6 +32,7 @@ public class RecipeAddPane extends BorderPane {
     TextField tfTimerMinutes = new TextField("<Enter cook time>");
     TextField tfRecipeDescription = new TextField("<Brief description>");
     TextField tfRecipeServesNumber = new TextField("<Enter number of people it serves");
+    TextField tfRecipeImageId = new TextField(("<Enter recipe image ID"));
     VBox topVBox = new VBox(C.SMALL_MARING_FIXED);
     HBox recipeCategoriesHBox = new HBox(C.SMALL_MARING_FIXED);
     VBox rightVBox = new VBox(C.SMALL_MARING_FIXED);
@@ -117,7 +118,7 @@ public class RecipeAddPane extends BorderPane {
     private void initializeTopVBox() {
         HBox recipeInfoHBox = new HBox(C.SMALL_MARING_FIXED);
         recipeInfoHBox.setPadding(new Insets(C.SMALL_MARING_FIXED));
-        recipeInfoHBox.getChildren().addAll(tfRecipeName, tfRecipeDescription, tfTimerMinutes, tfRecipeServesNumber);
+        recipeInfoHBox.getChildren().addAll(tfRecipeName, tfRecipeDescription, tfTimerMinutes, tfRecipeServesNumber, tfRecipeImageId);
         topVBox.getChildren().add(recipeInfoHBox);
 
         recipeCategoriesHBox.setAlignment(Pos.BASELINE_LEFT);
@@ -150,7 +151,7 @@ public class RecipeAddPane extends BorderPane {
         String region = cbCategoryRegion.getValue();
         ArrayList<RecipeStep> recipeStepList = null;
         ArrayList<Ingredient> recipeIngredientList = getIngredientAsArrayList();
-        int recipeImageId = 0;
+        int recipeImageId = Integer.valueOf(tfRecipeImageId.getText());
         int isGood = 2;
         String instructions = textAreaInstructions.getText();
 
