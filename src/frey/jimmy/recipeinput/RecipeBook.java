@@ -80,7 +80,19 @@ public class RecipeBook {
 
     public ArrayList<String> getAllIngredientUnits() {
         ArrayList<String> listOfAllUnits = new ArrayList<>();
-        listOfAllUnits.add("cups");
+        listOfAllUnits.add("fl oz");
+        listOfAllUnits.add("oz");
+        listOfAllUnits.add("lb");
+        listOfAllUnits.add("cup");
+        listOfAllUnits.add("ml");
+        listOfAllUnits.add("liter");
+        listOfAllUnits.add("tsp");
+        listOfAllUnits.add("tbsp");
+        listOfAllUnits.add("pinch");
+        listOfAllUnits.add("bunch");
+        listOfAllUnits.add("g");
+        listOfAllUnits.add("medium");
+        listOfAllUnits.add("large");
         for (Recipe r : mRecipes) {
             for (Ingredient i : r.getRecipeIngredientList()) {
                 if (!listOfAllUnits.contains(i.getUnit())) {

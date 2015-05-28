@@ -58,6 +58,17 @@ public class RecipeAddPane extends BorderPane {
     //Set everything in the recipe
     private void updateRecipe() {
         recipe.setRecipeName(tfRecipeName.getText());
+        recipe.setRecipeDescription(tfRecipeDescription.getText());
+        recipe.setTotalMinutes(Integer.valueOf(tfTimerMinutes.getText()));
+        recipe.setServesNumber(Integer.valueOf(tfRecipeServesNumber.getText()));
+        recipe.setRecipeImageId(Integer.valueOf(tfRecipeImageId.getText()));
+        recipe.setRecipeStepImageId(Integer.valueOf(tfRecipeImageId.getText()));
+        recipe.setInstructions(textAreaInstructions.getText());
+        recipe.setRecipeIngredientList(getIngredientAsArrayList());
+        recipe.setIsSweet(cbCategorySweetness.getValue().equals("Sweet"));
+        recipe.setIsLight(cbCategoryLightness.getValue().equals("Light"));
+        recipe.setRegion(cbCategoryRegion.getSelectionModel().getSelectedItem());
+
         RecipeBook.get().saveArrayListRecipe();
     }
 
@@ -69,10 +80,43 @@ public class RecipeAddPane extends BorderPane {
         tfRecipeImageId.setText(recipe.getRecipeImageId()+"");
         tfRecipeStepImageId.setText(recipe.getRecipeStepImageId()+"");
         textAreaInstructions.setText(recipe.getInstructions());
-
+        rightVBox.getChildren().clear();
+        ingredientEditSubPaneArrayList = new ArrayList<>();
         for (Ingredient ingredient : recipe.getRecipeIngredientList()) {
-            rightVBox.getChildren().add(new IngredientDisplaySubPane(ingredient));
+            IngredientEditSubPane subPane = new IngredientEditSubPane(String.valueOf(ingredient.getQuantity()),ingredient.getUnit(),ingredient.getName());
+            ingredientEditSubPaneArrayList.add(subPane);
+            rightVBox.getChildren().add(subPane);
         }
+        rightVBox.getChildren().add(btAddMoreIngredients);
+
+        String lightOrHeavy = null;
+        if(recipe.isLight()){
+            lightOrHeavy = "Light";
+        } else{
+            lightOrHeavy = "Heavy";
+        }
+        if(!cbCategoryLightness.getItems().contains(lightOrHeavy)){
+            cbCategoryLightness.getItems().add(lightOrHeavy);
+        }
+        cbCategoryLightness.getSelectionModel().select(lightOrHeavy);
+
+        String sweetOrSavory = null;
+        if(recipe.isSweet()){
+            sweetOrSavory = "Sweet";
+        } else{
+            sweetOrSavory = "Savory";
+        }
+        if(!cbCategorySweetness.getItems().contains(sweetOrSavory)){
+            cbCategorySweetness.getItems().add(sweetOrSavory);
+        }
+        cbCategorySweetness.getSelectionModel().select(sweetOrSavory);
+
+        String region = recipe.getRegion();
+        if(!cbCategoryRegion.getItems().contains(region)){
+            cbCategoryRegion.getItems().add(region);
+        }
+        cbCategoryRegion.getSelectionModel().select(region);
+
     }
 
 

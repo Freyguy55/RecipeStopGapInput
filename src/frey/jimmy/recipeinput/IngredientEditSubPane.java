@@ -26,6 +26,7 @@ public class IngredientEditSubPane extends HBox {
         comboBoxIngredientUnit.getItems().addAll(RecipeBook.get().getAllIngredientUnits());
         comboBoxIngredientUnit.setEditable(true);
         comboBoxIngredientUnit.setPrefWidth(C.INGREDIENT_LIST_SIZE);
+        comboBoxIngredientUnit.getSelectionModel().select(ingredientUnit);
 
         tfIngredientName.setText(ingredientName);
         tfIngredientName.setPrefWidth(C.INGREDIENT_LIST_SIZE);

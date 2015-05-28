@@ -72,7 +72,7 @@ public class RecipeSelectionPane extends BorderPane {
             String recipeNameSelected = listViewOfRecipes.getSelectionModel().getSelectedItem();
             for (Recipe r : arrayListRecipe) {
                 if (r.getRecipeName().equals(recipeNameSelected)) {
-                    primaryStage.setScene(Main.createScene(new RecipeAddPane(primaryStage)));
+                    primaryStage.setScene(Main.createScene(new RecipeAddPane(primaryStage,r)));
                     break;
                 }
             }
