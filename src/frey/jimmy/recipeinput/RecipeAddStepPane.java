@@ -33,7 +33,9 @@ public class RecipeAddStepPane extends BorderPane {
     ArrayList<IngredientEditSubPane> ingredientEditSubPaneArrayList = new ArrayList<>();
     private ArrayList<RecipeStep> mRecipeStepArrayList;
 
+    public RecipeAddStepPane(Stage primaryStage, Recipe r, int position){
 
+    }
     public RecipeAddStepPane(Stage primaryStage, Recipe r, ArrayList<RecipeStep>recipeStepArrayList) {
         this.setPadding(new Insets(C.SMALL_MARING_FIXED));
 
@@ -144,7 +146,6 @@ public class RecipeAddStepPane extends BorderPane {
         mRecipe.setRecipeStepList(mRecipeStepArrayList);
         System.out.println(mRecipe.getRecipeStepList().size());
         RecipeBook.get().addRecipe(mRecipe);
-        System.out.println("The first item in the recipe book has a recipe list of size: " + RecipeBook.get().getRecipes().get(0).getRecipeStepList().size());
         Main.notifyUser("Saved!");
 
     }

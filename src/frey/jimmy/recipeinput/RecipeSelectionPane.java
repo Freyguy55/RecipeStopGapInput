@@ -29,6 +29,7 @@ public class RecipeSelectionPane extends BorderPane {
     private HBox bottomHBox = new HBox(C.SMALL_MARGIN_PROPORTIONAL);
     private TextArea mServerTextArea = new TextArea();
     private Button mShutDownHTTPServer = new Button("Stop HTTP Server");
+    private Button mStartHttpServer = new Button("Start HTTP Server");
     private HttpServer httpServer;
 
     public RecipeSelectionPane(Stage primaryStage, ArrayList<Recipe> arrayListRecipe) {
@@ -40,7 +41,6 @@ public class RecipeSelectionPane extends BorderPane {
         if (arrayListRecipeNames.isEmpty()) arrayListRecipeNames.add("No recipes found");
         //Create textarea to display server info.
         this.setTop(mServerTextArea);
-        createHttpServer();
 
 
         // Create ListView that consists of the list of names.  Set it to display in center of BorderPane.
@@ -49,8 +49,15 @@ public class RecipeSelectionPane extends BorderPane {
         this.setCenter(listViewOfRecipes);
 
         // Configure and display buttons in bottom of BorderPane
-        bottomHBox.getChildren().addAll(btBackToAddRecipe, btChooseThisRecipe, mShutDownHTTPServer);
+        bottomHBox.getChildren().addAll(btBackToAddRecipe, btChooseThisRecipe,mStartHttpServer, mShutDownHTTPServer);
         this.setBottom(bottomHBox);
+
+        mStartHttpServer.setOnAction(e->{
+            if(httpServer != null) {
+                httpServer.stop(1);
+            }
+            createHttpServer();
+        });
 
         mShutDownHTTPServer.setOnAction(e->{
             httpServer.stop(1);
