@@ -30,6 +30,7 @@ public class RecipeSelectionPane extends BorderPane {
     private TextArea mServerTextArea = new TextArea();
     private Button mShutDownHTTPServer = new Button("Stop HTTP Server");
     private Button mStartHttpServer = new Button("Start HTTP Server");
+    private Button mDeleteRecipe = new Button("Delete recipe");
     private HttpServer httpServer;
 
     public RecipeSelectionPane(Stage primaryStage, ArrayList<Recipe> arrayListRecipe) {
@@ -49,7 +50,7 @@ public class RecipeSelectionPane extends BorderPane {
         this.setCenter(listViewOfRecipes);
 
         // Configure and display buttons in bottom of BorderPane
-        bottomHBox.getChildren().addAll(btBackToAddRecipe, btChooseThisRecipe,mStartHttpServer, mShutDownHTTPServer);
+        bottomHBox.getChildren().addAll(btBackToAddRecipe, btChooseThisRecipe,mStartHttpServer, mShutDownHTTPServer, mDeleteRecipe);
         this.setBottom(bottomHBox);
 
         mStartHttpServer.setOnAction(e->{
@@ -64,16 +65,21 @@ public class RecipeSelectionPane extends BorderPane {
             mServerTextArea.appendText("Stopping httpServer \n");
         });
 
+        mDeleteRecipe.setOnAction(e->{
+            String recipeNameSelected = listViewOfRecipes.getSelectionModel().getSelectedItem();
+            RecipeBook.get().removeRecipe(recipeNameSelected);
+        });
+
         btBackToAddRecipe.setOnAction(e -> {
             primaryStage.setScene(Main.createScene(new RecipeAddPane(primaryStage)));
         });
 
         btChooseThisRecipe.setOnAction(e -> {
             String recipeNameSelected = listViewOfRecipes.getSelectionModel().getSelectedItem();
+
             for (Recipe r : arrayListRecipe) {
                 if (r.getRecipeName().equals(recipeNameSelected)) {
                     primaryStage.setScene(Main.createScene(new RecipeAddPane(primaryStage,r)));
-                    break;
                 }
             }
 

@@ -48,7 +48,11 @@ public class RecipeAddPane extends BorderPane {
         btAddStep.setText("Go to next step");
         btDone.setText("Update recipe");
         btAddStep.setOnAction(e -> {
-            primaryStage.setScene(Main.createScene(new RecipeAddStepPane(primaryStage, recipe, 0)));
+            if(recipe.getRecipeStepList()!=null) {
+                primaryStage.setScene(Main.createScene(new RecipeAddStepPane(primaryStage, recipe, 0)));
+            } else{
+                Main.notifyUser("No steps in this recipe");
+            }
         });
 
         btDone.setOnAction(e -> {

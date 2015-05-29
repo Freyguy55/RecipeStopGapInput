@@ -26,17 +26,72 @@ public class RecipeAddStepPane extends BorderPane {
     Button btAddMoreIngredients = new Button("Add more ingredients");
     Button btDone = new Button("Save this recipe");
     Button btAddStep = new Button("Save this step and add another step");
+    Button btPrevious = new Button("Previous Step");
     TextField tfRecipeImageId = new TextField(("<Enter recipe image ID>"));
     VBox topVBox = new VBox(C.SMALL_MARING_FIXED);
     VBox rightVBox = new VBox(C.SMALL_MARING_FIXED);
     HBox bottomHBox = new HBox(C.SMALL_MARING_FIXED);
     ArrayList<IngredientEditSubPane> ingredientEditSubPaneArrayList = new ArrayList<>();
     private ArrayList<RecipeStep> mRecipeStepArrayList;
+    private int mPosition;
+    private RecipeStep step;
 
-    public RecipeAddStepPane(Stage primaryStage, Recipe r, int position){
+    public RecipeAddStepPane(Stage primaryStage, Recipe r, int position) {
+        this(primaryStage, r, null);
+        mPosition = position;
+        mRecipeStepArrayList = r.getRecipeStepList();
+        if(mPosition < mRecipeStepArrayList.size()){
+            step = mRecipeStepArrayList.get(mPosition);
+            setStepData();
+        }
+
+
+        btAddStep.setText("Next step");
+        btAddStep.setOnAction(e -> {
+                primaryStage.setScene(Main.createScene(new RecipeAddStepPane(primaryStage, mRecipe, mPosition + 1)));
+        });
+
+        btDone.setText("Save this step");
+        btDone.setOnAction(e -> {
+            if(mPosition < mRecipeStepArrayList.size()) {
+                updateStep();
+            } else {
+                addStep();
+            }
+        });
+        btPrevious.setOnAction(e -> {
+            if (position > 0) {
+                primaryStage.setScene(Main.createScene(new RecipeAddStepPane(primaryStage, mRecipe, mPosition - 1)));
+            } else {
+                primaryStage.setScene(Main.createScene(new RecipeAddPane(primaryStage, mRecipe)));
+            }
+        });
+        bottomHBox.getChildren().add(btPrevious);
+
 
     }
-    public RecipeAddStepPane(Stage primaryStage, Recipe r, ArrayList<RecipeStep>recipeStepArrayList) {
+
+    private void setStepData() {
+        tfRecipeImageId.setText(step.getImageId() + "");
+        textAreaInstructions.setText(step.getInstructions());
+        rightVBox.getChildren().clear();
+        ingredientEditSubPaneArrayList = new ArrayList<>();
+        for (Ingredient ingredient : step.getRecipeStepIngredientList()) {
+            IngredientEditSubPane subPane = new IngredientEditSubPane(String.valueOf(ingredient.getQuantity()), ingredient.getUnit(), ingredient.getName());
+            ingredientEditSubPaneArrayList.add(subPane);
+            rightVBox.getChildren().add(subPane);
+        }
+        rightVBox.getChildren().add(btAddMoreIngredients);
+    }
+
+    private void updateStep() {
+        step.setInstructions(textAreaInstructions.getText());
+        step.setImageId(Integer.valueOf(tfRecipeImageId.getText()));
+        step.setRecipeStepIngredientList(getIngredientAsArrayList());
+        RecipeBook.get().saveArrayListRecipe();
+    }
+
+    public RecipeAddStepPane(Stage primaryStage, Recipe r, ArrayList<RecipeStep> recipeStepArrayList) {
         this.setPadding(new Insets(C.SMALL_MARING_FIXED));
 
         mRecipe = r;
@@ -66,11 +121,11 @@ public class RecipeAddStepPane extends BorderPane {
             addIngredientPane();
         });
 
-        btAddStep.setOnAction(e->{
+        btAddStep.setOnAction(e -> {
             ArrayList<Ingredient> recipeStepIngredientList = getIngredientAsArrayList();
             int recipeStepImageId = Integer.valueOf(tfRecipeImageId.getText());
             String instructions = textAreaInstructions.getText();
-            RecipeStep stepToAdd = new RecipeStep(recipeStepIngredientList,instructions,recipeStepImageId);
+            RecipeStep stepToAdd = new RecipeStep(recipeStepIngredientList, instructions, recipeStepImageId);
             mRecipeStepArrayList.add(stepToAdd);
             mRecipe.setRecipeStepList(mRecipeStepArrayList);
             System.out.println(mRecipe.getRecipeStepList().size());
@@ -141,13 +196,26 @@ public class RecipeAddStepPane extends BorderPane {
         ArrayList<Ingredient> recipeStepIngredientList = getIngredientAsArrayList();
         int recipeStepImageId = Integer.valueOf(tfRecipeImageId.getText());
         String instructions = textAreaInstructions.getText();
-        RecipeStep stepToAdd = new RecipeStep(recipeStepIngredientList,instructions,recipeStepImageId);
+        RecipeStep stepToAdd = new RecipeStep(recipeStepIngredientList, instructions, recipeStepImageId);
         mRecipeStepArrayList.add(stepToAdd);
         mRecipe.setRecipeStepList(mRecipeStepArrayList);
-        System.out.println(mRecipe.getRecipeStepList().size());
         RecipeBook.get().addRecipe(mRecipe);
         Main.notifyUser("Saved!");
+    }
 
+    private void addStep() {
+        if (!isValid()) {
+            Main.notifyUser("Invalid.  Did not save");
+            return;
+        }
+        ArrayList<Ingredient> recipeStepIngredientList = getIngredientAsArrayList();
+        int recipeStepImageId = Integer.valueOf(tfRecipeImageId.getText());
+        String instructions = textAreaInstructions.getText();
+        RecipeStep stepToAdd = new RecipeStep(recipeStepIngredientList, instructions, recipeStepImageId);
+        mRecipeStepArrayList.add(stepToAdd);
+        mRecipe.setRecipeStepList(mRecipeStepArrayList);
+        RecipeBook.get().saveArrayListRecipe();
+        Main.notifyUser("Saved!");
     }
 
     private ArrayList<Ingredient> getIngredientAsArrayList() {

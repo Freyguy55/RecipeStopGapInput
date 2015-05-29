@@ -109,6 +109,15 @@ public class RecipeBook {
         saveArrayListRecipe();
     }
 
+    public void removeRecipe(String name){
+        for(int i = 0; i < mRecipes.size();i++){
+            if(mRecipes.get(i).getRecipeName().equals(name)){
+                mRecipes.remove(i);
+            }
+        }
+        saveArrayListRecipe();
+    }
+
     // Saves the Recipe ArrayList to file.
     public void saveArrayListRecipe() {
         try {
